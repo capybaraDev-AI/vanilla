@@ -481,31 +481,8 @@ public class MediaUtils {
 	* is also accessible using a fuse mount
 	*/
 	private static String sanitizeMediaPath(String path) {
-
-		String exPath  = Environment.getExternalStorageDirectory().getAbsolutePath();
-		File exStorage = new File(exPath+"/Android");
-		long exLastmod = exStorage.lastModified();
-
-		if(exLastmod > 0 && path != null) {
-			String pfx = path;
-			while(true) {
-				if((new File(pfx+"/Android")).lastModified() == exLastmod) {
-					String guessPath = exPath + path.substring(pfx.length());
-					if( (new File(guessPath)).exists() ) {
-						path = guessPath;
-						break;
-					}
-				}
-
-				pfx = (new File(pfx)).getParent();
-				if(pfx == null)
-					break; /* hit root */
-			}
-		}
-
 		return path;
 	}
-
 	/**
 	* Adds a final slash if the path points to an existing directory
 	*/
@@ -644,7 +621,7 @@ public class MediaUtils {
 				cursor.close();
 			}
 		} catch (SecurityException e) {
-			Log.e("VanillaMusic", "Wowies: No permission to read EXTERNAL_CONTENT_URI for song "+song.path+": "+e);
+			Log.e("VanillaMusic", "getAndroidMediaIds: no permission for " + song.path + ": " + e);
 		}
 		return result;
 	}
