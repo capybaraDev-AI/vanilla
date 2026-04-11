@@ -11,8 +11,11 @@
 ## Fase 2 - APIs modernas ✅ COMPLETA
 - PlaybackService.java: AudioFocus migrado a AudioFocusRequest (API 26+)
 - PlaybackService.java: abandonAudioFocus() agregado en onDestroy()
+- PlaybackService.java: broadcastChange() fuerza actualización de notificación al cambiar canción
+- PlaybackService.java: stopForeground(false) al pausar — notificación se mantiene correctamente
 - AudioSearchActivity.java: AsyncTask reemplazado por Thread + runOnUiThread
 - AudioPickerActivity.java: AsyncTask reemplazado por Thread + AtomicBoolean
+- PermissionRequestActivity.java: soporte para READ_MEDIA_VISUAL_USER_SELECTED (Android 14+)
 
 ## Fase 3 - Pendiente
 - SlidingTabLayout → TabLayout de Material
