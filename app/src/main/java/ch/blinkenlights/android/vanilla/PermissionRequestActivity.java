@@ -12,14 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package ch.blinkenlights.android.vanilla;
 
-
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.Context;
@@ -35,31 +33,17 @@ import java.util.ArrayList;
 
 public class PermissionRequestActivity extends Activity {
 
-	/**
-	 * The intent to start after acquiring the required permissions
-	 */
 	private Intent mCallbackIntent;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		mCallbackIntent = getIntent().getExtras().getParcelable("callbackIntent");
-
 		ArrayList<String> allPerms = new ArrayList<>(Arrays.asList(getNeededPermissions()));
 		allPerms.addAll(Arrays.asList(getOptionalPermissions()));
-
 		requestPermissions(allPerms.toArray(new String[0]), 0);
 	}
 
-	/**
-	 * Called by Activity after the user interacted with the permission request
-	 * Will launch the main activity if all permissions were granted, exits otherwise
-	 *
-	 * @param requestCode The code set by requestPermissions
-	 * @param permissions Names of the permissions we got granted or denied
-	 * @param grantResults Results of the permission requests
-	 */
 	@Override
 	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 		ArrayList<String> neededPerms = new ArrayList<>(Arrays.asList(getNeededPermissions()));
@@ -72,72 +56,74 @@ public class PermissionRequestActivity extends Activity {
 				grantedPermissions++;
 		}
 
-		// set as finished before (possibly) killing ourselfs
+		// En Android 14+ el usuario puede conceder acceso limitado a fotos
+		// (READ_MEDIA_VISUAL_USER_SELECTED). Aceptamos eso como suficiente
+		// en lugar de seguir pidiendo READ_MEDIA_IMAGES completo.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+			boolean hasLimitedImages = checkSelfPermission(
+				Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED;
+			boolean hasFullImages = checkSelfPermission(
+				Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED;
+			if (hasLimitedImages || hasFullImages) {
+				// Contar READ_MEDIA_IMAGES como concedido si hay cualquiera de los dos
+				if (neededPerms.contains(Manifest.permission.READ_MEDIA_IMAGES))
+					grantedPermissions++;
+			}
+		}
+
 		finish();
 
 		if (grantedPermissions == neededPerms.size()) {
 			if (mCallbackIntent != null) {
-				// start the old intent but ensure to make it a new task & clear any old attached activites
 				mCallbackIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				startActivity(mCallbackIntent);
 			}
-			// Hack: We *kill* ourselfs (while launching the main activity) to get startet
-			// in a new process: This works around a bug/feature in 6.0 that would cause us
-			// to get 'partial read' permissions (eg: reading from the content provider works
-			// but reading from /sdcard doesn't)
 			android.os.Process.killProcess(android.os.Process.myPid());
 		}
 	}
 
-	/**
-	 * Injects a warning that we are missing read permissions into the activity layout
-	 *
-	 * @param activity Reference to LibraryActivity
-	 * @param intent The intent starting the parent activity
-	 */
 	public static void showWarning(final LibraryActivity activity, final Intent intent) {
 		LayoutInflater inflater = LayoutInflater.from(activity);
 		View view = inflater.inflate(R.layout.permission_request, null, false);
-
 		view.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				PermissionRequestActivity.requestPermissions(activity, intent);
 			}
 		});
-
-		ViewGroup parent = (ViewGroup)activity.findViewById(R.id.content); // main layout of library_content
+		ViewGroup parent = (ViewGroup)activity.findViewById(R.id.content);
 		parent.addView(view, -1);
 	}
 
-	/**
-	 * Launches a permission request dialog if needed
-	 *
-	 * @param activity The activitys context to use for the permission check
-	 * @return boolean true if we showed a permission request dialog
-	 */ 
 	public static boolean requestPermissions(Activity activity, Intent callbackIntent) {
 		boolean havePermissions = havePermissions(activity);
-
-		if (havePermissions == false) {
+		if (!havePermissions) {
 			Intent intent = new Intent(activity, PermissionRequestActivity.class);
 			intent.putExtra("callbackIntent", callbackIntent);
 			activity.startActivity(intent);
 		}
-
 		return !havePermissions;
 	}
 
-	/**
-	 * Checks if all required permissions have been granted
-	 *
-	 * @param context The context to use
-	 * @return boolean true if all permissions have been granded
-	 */
 	public static boolean havePermissions(Context context) {
+		// Verificar permisos de audio — siempre requerido
 		for (String permission : getNeededPermissions()) {
-			if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-				return false;
+			if (permission.equals(Manifest.permission.READ_MEDIA_IMAGES)) {
+				// Para imágenes aceptamos acceso completo O acceso limitado (Android 14+)
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+					boolean full = context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES)
+						== PackageManager.PERMISSION_GRANTED;
+					boolean limited = context.checkSelfPermission(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+						== PackageManager.PERMISSION_GRANTED;
+					if (!full && !limited)
+						return false;
+				} else {
+					if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
+						return false;
+				}
+			} else {
+				if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
+					return false;
 			}
 		}
 		return true;
@@ -145,19 +131,18 @@ public class PermissionRequestActivity extends Activity {
 
 	private static String[] getNeededPermissions() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-			return new String[] { Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES };
+			return new String[]{ Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES };
 		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-			return new String[] { Manifest.permission.READ_EXTERNAL_STORAGE };
+			return new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE };
 		}
-		return new String[] { Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE };
+		return new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE };
 	}
 
 	private static String[] getOptionalPermissions() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-			return new String[] { Manifest.permission.POST_NOTIFICATIONS };
+			return new String[]{ Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED };
 		}
 		return new String[]{};
 	}
-
 }
