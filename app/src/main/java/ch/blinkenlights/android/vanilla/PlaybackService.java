@@ -1104,30 +1104,30 @@ public final class PlaybackService extends Service
 		}
 	}
 
-	private void broadcastChange(int state, Song song, long uptime)
-	{
-		if (state != -1) {
-			ArrayList<TimelineCallback> list = sCallbacks;
-			for (int i = list.size(); --i != -1; )
-				list.get(i).setState(uptime, state);
-		}
-
-		if (song != null) {
-			ArrayList<TimelineCallback> list = sCallbacks;
-			for (int i = list.size(); --i != -1; )
-				list.get(i).setSong(uptime, song);
-		}
-
-		updateWidgets();
-
-		if (mReadaheadEnabled)
-			triggerReadAhead();
-
-		mRemoteControlClient.updateRemote(mCurrentSong, mState, mForceNotificationVisible);
-		mMediaSessionTracker.updateSession(mCurrentSong, mState);
-
-		scrobbleBroadcast();
-	}
+private void broadcastChange(int state, Song song, long uptime)
+{
+    if (state != -1) {
+        ArrayList<TimelineCallback> list = sCallbacks;
+        for (int i = list.size(); --i != -1; )
+            list.get(i).setState(uptime, state);
+    }
+    if (song != null) {
+        ArrayList<TimelineCallback> list = sCallbacks;
+        for (int i = list.size(); --i != -1; )
+            list.get(i).setSong(uptime, song);
+    }
+    updateWidgets();
+    if (mReadaheadEnabled)
+        triggerReadAhead();
+    mRemoteControlClient.updateRemote(mCurrentSong, mState, mForceNotificationVisible);
+    mMediaSessionTracker.updateSession(mCurrentSong, mState);
+    // Forzar actualización de la notificación cuando cambia la canción
+    // para que el título/artista/carátula se reflejen inmediatamente
+    if (song != null) {
+        updateNotification();
+    }
+    scrobbleBroadcast();
+}
 
 	/**
 	 * Check if there are any instances of each widget.
