@@ -329,6 +329,7 @@ public final class PlaybackService extends Service
 	private boolean mMediaPlayerAudioFxActive;
 	private PowerManager.WakeLock mWakeLock;
 	private AudioManager mAudioManager;
+	private AudioFocusRequest mAudioFocusRequest;
 	/**
 	 * The SensorManager service.
 	 */
@@ -614,6 +615,14 @@ public final class PlaybackService extends Service
 
 		// clear the notification
 		stopForeground(true);
+
+		// release audio focus
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			if (mAudioFocusRequest != null)
+				mAudioManager.abandonAudioFocusRequest(mAudioFocusRequest);
+		} else {
+			mAudioManager.abandonAudioFocus(this);
+		}
 
 		// defer wakelock and close audioFX
 		enterSleepState();
@@ -1032,7 +1041,15 @@ public final class PlaybackService extends Service
 				// Update the notification with the current song information.
 				startForeground(NOTIFICATION_ID, createNotification(mCurrentSong, mState));
 
-				final int result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+				final int result;
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+					mAudioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+						.setOnAudioFocusChangeListener(this)
+						.build();
+					result = mAudioManager.requestAudioFocus(mAudioFocusRequest);
+				} else {
+					result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+				}
 				if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 					unsetFlag(FLAG_PLAYING);
 				}
