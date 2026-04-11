@@ -17,8 +17,10 @@
 
 package ch.blinkenlights.android.medialibrary;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.ContentValues;
+import android.net.Uri;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.os.Build;
@@ -617,6 +619,30 @@ public class MediaLibrary  {
 			hash = 31*hash + str.charAt(i);
 		}
 		return (hash < 0 ? hash*-1 : hash);
+	}
+
+	/**
+	 * Resolves a MediaStore content URI to an absolute filesystem path.
+	 * Uses MediaColumns.DATA which, while deprecated for writing, remains the
+	 * only zero-dependency way to get a path from a URI on Android 10+.
+	 * No new permissions are required beyond READ_MEDIA_AUDIO.
+	 *
+	 * @param context the context to use
+	 * @param uri     a content:// URI from MediaStore
+	 * @return absolute path string, or null if resolution failed
+	 */
+	public static String getPathFromUri(Context context, Uri uri) {
+		String[] projection = { MediaStore.MediaColumns.DATA };
+		try (Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null)) {
+			if (cursor != null && cursor.moveToFirst()) {
+				String path = cursor.getString(0);
+				if (path != null && !path.isEmpty())
+					return path;
+			}
+		} catch (Exception e) {
+			Log.e("VanillaMusic", "getPathFromUri failed for " + uri + ": " + e);
+		}
+		return null;
 	}
 
 	// Columns of Song entries
