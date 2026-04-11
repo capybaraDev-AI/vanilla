@@ -91,7 +91,15 @@ public class CoverCache {
 	/**
 	 * The public downloads directory of this device
 	 */
-	private static final File sDownloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+	private static File sDownloadsDir = null;
+
+	private static File getDownloadsDir(Context ctx) {
+		if (sDownloadsDir == null)
+			sDownloadsDir = ctx.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) != null
+				? Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+				: new File("");
+		return sDownloadsDir;
+	}
 
 
 	/**
@@ -420,7 +428,7 @@ public class CoverCache {
 					// Only start search if the base directory of this file is NOT the public
 					// downloads folder: Picking files from there would lead to a false positive
 					// in most cases
-					if (baseFile.getParentFile().equals(sDownloadsDir) == false) {
+					if (baseFile.getParentFile() != null && baseFile.getParentFile().equals(getDownloadsDir(ctx)) == false) {
 						for (final File entry : baseFile.getParentFile().listFiles()) {
 							for (int i=0; i < bestMatchIndex ; i++) {
 								// We are checking each file entry to see if it matches a known
@@ -447,7 +455,9 @@ public class CoverCache {
 				}
 
 				if (inputStream == null && (CoverCache.mCoverLoadMode & CoverCache.COVER_MODE_SHADOW) != 0) {
-					final String shadowBase = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() + "/.vanilla";
+					File musicDir = ctx.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+					if (musicDir == null) musicDir = ctx.getFilesDir();
+					final String shadowBase = musicDir.getPath() + "/.vanilla";
 					final String shadowPath = shadowBase + "/" + (song.artist.replaceAll("/", "_"))+"/"+(song.album.replaceAll("/", "_"))+".jpg";
 
 					File guessedFile = new File(shadowPath);
