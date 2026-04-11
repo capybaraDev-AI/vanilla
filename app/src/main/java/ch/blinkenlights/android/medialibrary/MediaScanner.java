@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.ContentObserver;
 import android.util.Log;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -388,24 +389,38 @@ public class MediaScanner implements Handler.Callback {
 	 */
 	private void rpcNativeVerify(Cursor cursor, int mtime) {
 		if (cursor == null) {
-			mtime = MediaLibrary.getPreferences(mContext)._nativeLastMtime; // starting a new scan -> read stored mtime from preferences
-			String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0 AND "+ MediaStore.MediaColumns.DATE_MODIFIED +" > " + (mtime - NATIVE_VRFY_MTIME_SLACK);
+			mtime = MediaLibrary.getPreferences(mContext)._nativeLastMtime;
+			String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0 AND " + MediaStore.MediaColumns.DATE_MODIFIED + " > " + (mtime - NATIVE_VRFY_MTIME_SLACK);
 			String sort = MediaStore.MediaColumns.DATE_MODIFIED;
-			String[] projection = { MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DATE_MODIFIED };
+			// On API 29+ MediaColumns.DATA is deprecated. Use _ID to build a content URI instead.
+			String[] projection;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+				projection = new String[]{ MediaStore.Audio.Media._ID, MediaStore.MediaColumns.DATE_MODIFIED };
+			} else {
+				projection = new String[]{ MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DATE_MODIFIED };
+			}
 			try {
 				cursor = mContext.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, selection, null, sort);
-			} catch(SecurityException e) {
-				Log.e("VanillaMusic", "rpcNativeVerify failed: "+e);
+			} catch (SecurityException e) {
+				Log.e("VanillaMusic", "rpcNativeVerify failed: " + e);
 			}
 		}
 
 		if (cursor == null)
-			return; // still null.. fixme: handle me better
+			return;
 
 		if (cursor.moveToNext()) {
-			String path = cursor.getString(0);
 			mtime = cursor.getInt(1);
-			if (path != null) { // this seems to be a thing...
+			String path = null;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+				long id = cursor.getLong(0);
+				android.net.Uri itemUri = android.content.ContentUris.withAppendedId(
+						MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+				path = MediaLibrary.getPathFromUri(mContext, itemUri);
+			} else {
+				path = cursor.getString(0);
+			}
+			if (path != null) {
 				File entry = new File(path);
 				mHandler.sendMessage(mHandler.obtainMessage(MSG_SCAN_RPC, RPC_INSPECT_FILE, 0, entry));
 				mHandler.sendMessage(mHandler.obtainMessage(MSG_SCAN_RPC, RPC_NATIVE_VRFY, mtime, cursor));
@@ -413,7 +428,7 @@ public class MediaScanner implements Handler.Callback {
 		} else {
 			cursor.close();
 			setNativeLastMtime(mtime);
-			Log.v("VanillaMusic", "NativeLibraryScanner finished, mtime mark is now at "+mtime);
+			Log.v("VanillaMusic", "NativeLibraryScanner finished, mtime mark is now at " + mtime);
 		}
 	}
 
