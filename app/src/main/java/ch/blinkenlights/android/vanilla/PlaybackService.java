@@ -1071,9 +1071,16 @@ public final class PlaybackService extends Service
 				// In both cases we will update the notification to reflect the
 				// actual playback state (or to hit cancel() as this is required to
 				// get rid of it if it was created via notify())
-				boolean removeNotification = (mForceNotificationVisible == false && mNotificationVisibility != VISIBILITY_ALWAYS);
-				stopForeground(removeNotification);
+				
+				// Siempre mantenemos la notificación al pausar (stopForeground(false))
+				// y la actualizamos manualmente según la preferencia del usuario.
+				stopForeground(false);
 				updateNotification();
+				if (!(mForceNotificationVisible ||
+					  mNotificationVisibility == VISIBILITY_ALWAYS ||
+					  mNotificationVisibility == VISIBILITY_WHEN_PLAYING)) {
+					mNotificationHelper.cancel(NOTIFICATION_ID);
+				}
 
 				// Delay entering deep sleep. This allows the headset
 				// button to continue to function for a short period after
