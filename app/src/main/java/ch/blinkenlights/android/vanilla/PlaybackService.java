@@ -1072,13 +1072,14 @@ public final class PlaybackService extends Service
 				// actual playback state (or to hit cancel() as this is required to
 				// get rid of it if it was created via notify())
 				
-				// Siempre mantenemos la notificación al pausar (stopForeground(false))
-				// y la actualizamos manualmente según la preferencia del usuario.
+				// Al pausar: stopForeground(false) mantiene la notificación pero
+				// permite que Android la elimine si el sistema necesita recursos.
+				// Luego decidimos si mantenerla o cancelarla según la preferencia.
 				stopForeground(false);
 				updateNotification();
 				if (!(mForceNotificationVisible ||
 					  mNotificationVisibility == VISIBILITY_ALWAYS ||
-					  mNotificationVisibility == VISIBILITY_WHEN_PLAYING)) {
+					  (mNotificationVisibility == VISIBILITY_WHEN_PLAYING && (mState & FLAG_PLAYING) != 0))) {
 					mNotificationHelper.cancel(NOTIFICATION_ID);
 				}
 
