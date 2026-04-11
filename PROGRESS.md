@@ -8,10 +8,11 @@
 - CoverCache.java: Downloads dir lazy, shadowBase privado
 - app/build.gradle: applicationId cambiado a .dev para coexistir con original
 
-## Fase 2 - Pendiente
-- AudioFocus API moderna (AudioFocusRequest)
-- AsyncTask → reemplazar en AudioSearchActivity y AudioPickerActivity
-- AudioPickerActivity: query por MediaColumns.DATA
+## Fase 2 - APIs modernas ✅ COMPLETA
+- PlaybackService.java: AudioFocus migrado a AudioFocusRequest (API 26+)
+- PlaybackService.java: abandonAudioFocus() agregado en onDestroy()
+- AudioSearchActivity.java: AsyncTask reemplazado por Thread + runOnUiThread
+- AudioPickerActivity.java: AsyncTask reemplazado por Thread + AtomicBoolean
 
 ## Fase 3 - Pendiente
 - SlidingTabLayout → TabLayout de Material
