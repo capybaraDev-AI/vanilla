@@ -48,6 +48,7 @@ import android.content.DialogInterface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 
 /**
  * The primary playback screen with playback controls and large cover display.
@@ -138,7 +139,17 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		}
 
 		setContentView(layout);
+		getWindow().setStatusBarColor(Color.TRANSPARENT);
+		getWindow().getDecorView().setSystemUiVisibility(
+		    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+		    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		findViewById(R.id.sliding_view).setBackgroundColor(Color.TRANSPARENT);
+		
+		GradientDrawable scrim = new GradientDrawable(
+		    GradientDrawable.Orientation.TOP_BOTTOM,
+		    new int[]{ 0x88000000, 0x00000000 });
+		findViewById(R.id.status_bar_scrim).setBackground(scrim);
 
 		CoverView coverView = (CoverView)findViewById(R.id.cover_view);
 		coverView.setup(mLooper, this, coverStyle);
