@@ -235,7 +235,7 @@ public final class CoverBitmap {
 			int twidth = (int)paint.measureText(line);
 			int tstart = tshift + (width - tshift - twidth) / 2;
 			drawText(canvas, line, tstart, top, width, twidth + margin * 2, paint);
-			top += textSizeBig;
+			top += textSizeBig + (int)(textSizeBig * 0.15f);
 		}
 		top += padding;
 
@@ -246,7 +246,7 @@ public final class CoverBitmap {
 			int twidth = (int)paint.measureText(line);
 			int tstart = tshift + (width - tshift - twidth) / 2;
 			drawText(canvas, line, tstart, top, width, twidth + margin * 2, paint);
-			top += textSize;
+			top += textSize + (int)(textSize * 0.15f);
 		}
 		top += padding;
 
@@ -255,7 +255,7 @@ public final class CoverBitmap {
 			int twidth = (int)paint.measureText(line);
 			int tstart = tshift + (width - tshift - twidth) / 2;
 			drawText(canvas, line, tstart, top, width, twidth + margin * 2, paint);
-			top += textSize;
+			top += textSize + (int)(textSize * 0.15f);
 		}
 
 		return bitmap;
