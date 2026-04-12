@@ -138,6 +138,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		}
 
 		setContentView(layout);
+		findViewById(R.id.sliding_view).setBackgroundColor(Color.TRANSPARENT);
 
 		CoverView coverView = (CoverView)findViewById(R.id.cover_view);
 		coverView.setup(mLooper, this, coverStyle);
