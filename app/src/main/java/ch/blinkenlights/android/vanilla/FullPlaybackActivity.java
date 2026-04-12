@@ -45,6 +45,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 
 /**
  * The primary playback screen with playback controls and large cover display.
@@ -240,6 +243,52 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			updateQueuePosition();
 	}
 
+	/**
+	 * Extrae el color dominante de un bitmap promediando los píxeles
+	 * de una versión reducida. Sin dependencias externas.
+	 */
+	private int getDominantColor(Bitmap bitmap) {
+	    if (bitmap == null) return Color.parseColor("#212121");
+	    Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 24, 24, true);
+	    long r = 0, g = 0, b = 0;
+	    int count = 0;
+	    for (int x = 0; x < scaled.getWidth(); x++) {
+	        for (int y = 0; y < scaled.getHeight(); y++) {
+	            int pixel = scaled.getPixel(x, y);
+	            if (Color.alpha(pixel) < 128) continue;
+	            r += Color.red(pixel);
+	            g += Color.green(pixel);
+	            b += Color.blue(pixel);
+	            count++;
+	        }
+	    }
+	    if (count == 0) return Color.parseColor("#212121");
+	    r /= count; g /= count; b /= count;
+	    // Oscurecer el color para que el fondo no sea demasiado brillante
+	    r = (long)(r * 0.5f);
+	    g = (long)(g * 0.5f);
+	    b = (long)(b * 0.5f);
+	    return Color.rgb((int)r, (int)g, (int)b);
+	}
+	
+	/**
+	 * Aplica el color dominante de la carátula como fondo degradado
+	 */
+	private void applyBackgroundGradient(Song song) {
+	    View bg = findViewById(R.id.background_gradient);
+	    if (bg == null) return;
+	
+	    Bitmap cover = (song != null) ? song.getLargeCover(this) : null;
+	    int dominantColor = getDominantColor(cover);
+	    int darkColor = Color.parseColor("#111111");
+	
+	    GradientDrawable gradient = new GradientDrawable(
+	        GradientDrawable.Orientation.TOP_BOTTOM,
+	        new int[]{ dominantColor, darkColor }
+	    );
+	    bg.setBackground(gradient);
+	}
+
 	@Override
 	protected void onSongChange(Song song) {
 		if (mTitle != null) {
@@ -264,6 +313,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		if (mExtraInfoVisible) {
 			mHandler.sendEmptyMessage(MSG_LOAD_EXTRA_INFO);
 		}
+		applyBackgroundGradient(song);
 		super.onSongChange(song);
 	}
 
