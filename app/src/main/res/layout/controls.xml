@@ -28,6 +28,7 @@ THE SOFTWARE.
 	android:layout_width="fill_parent"
 	android:background="?overlay_background_color"
 	android:orientation="horizontal"
+	android:clipChildren="false"
 	android:elevation="2dp">
 	<ch.blinkenlights.android.vanilla.VanillaImageButton
 		android:id="@+id/shuffle"
