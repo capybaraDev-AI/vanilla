@@ -49,8 +49,8 @@
               android:layout_height="wrap_content"
               android:background="@android:color/transparent"
               android:orientation="vertical">
-                  <include layout="@layout/seek_bar" />
-                  <include layout="@layout/controls" android:id="@+id/queue_slider" />
+                  <include layout="@layout/seek_bar_playback" />
+				  <include layout="@layout/controls_playback" android:id="@+id/queue_slider" />
           </LinearLayout>
           <fragment class="ch.blinkenlights.android.vanilla.ShowQueueFragment"
               android:id="@+id/queue"
