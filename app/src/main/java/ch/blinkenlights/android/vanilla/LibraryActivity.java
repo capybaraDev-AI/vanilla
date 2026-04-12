@@ -159,6 +159,7 @@ public class LibraryActivity
 	public void onCreate(Bundle state)
 	{
 		ThemeHelper.setTheme(this, R.style.Library);
+		com.google.android.material.color.DynamicColors.applyToActivityIfAvailable(this);
 		super.onCreate(state);
 
 		if (state == null) {
