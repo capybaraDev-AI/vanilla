@@ -143,7 +143,9 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		getWindow().getDecorView().setSystemUiVisibility(
 		    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
 		    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+		if (getActionBar() != null) {
+		    getActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+		}
 		findViewById(R.id.sliding_view).setBackgroundColor(Color.TRANSPARENT);
 		
 		GradientDrawable scrim = new GradientDrawable(
