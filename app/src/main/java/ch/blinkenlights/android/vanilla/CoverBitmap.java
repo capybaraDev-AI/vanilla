@@ -62,13 +62,11 @@ public final class CoverBitmap {
 	}
 
 	private static void drawText(Canvas canvas, String text, int left, int top, int width, int maxWidth, Paint paint) {
-		canvas.save();
-		int margin = (int)(paint.getTextSize() * 0.8f);
-		int availableWidth = maxWidth - margin * 2;
-		int offset = Math.max(0, availableWidth - width) / 2;
-		canvas.clipRect(left + margin, top, left + maxWidth - margin, top + paint.getTextSize() * 2);
-		canvas.drawText(text, left + margin + offset, top - paint.ascent(), paint);
-		canvas.restore();
+	    canvas.save();
+	    int margin = (int)(paint.getTextSize() * 0.5f);
+	    canvas.clipRect(left - margin, top, left + maxWidth + margin, top + paint.getTextSize() * 2);
+	    canvas.drawText(text, left, top - paint.ascent(), paint);
+	    canvas.restore();
 	}
 
 	/**
