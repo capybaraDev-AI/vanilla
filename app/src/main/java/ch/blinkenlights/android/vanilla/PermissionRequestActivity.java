@@ -18,6 +18,7 @@
 package ch.blinkenlights.android.vanilla;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.Context;
@@ -56,21 +57,6 @@ public class PermissionRequestActivity extends Activity {
 				grantedPermissions++;
 		}
 
-		// En Android 14+ el usuario puede conceder acceso limitado a fotos
-		// (READ_MEDIA_VISUAL_USER_SELECTED). Aceptamos eso como suficiente
-		// en lugar de seguir pidiendo READ_MEDIA_IMAGES completo.
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-			boolean hasLimitedImages = checkSelfPermission(
-				Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED;
-			boolean hasFullImages = checkSelfPermission(
-				Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED;
-			if (hasLimitedImages || hasFullImages) {
-				// Contar READ_MEDIA_IMAGES como concedido si hay cualquiera de los dos
-				if (neededPerms.contains(Manifest.permission.READ_MEDIA_IMAGES))
-					grantedPermissions++;
-			}
-		}
-
 		finish();
 
 		if (grantedPermissions == neededPerms.size()) {
@@ -106,24 +92,9 @@ public class PermissionRequestActivity extends Activity {
 	}
 
 	public static boolean havePermissions(Context context) {
-		// Verificar permisos de audio — siempre requerido
 		for (String permission : getNeededPermissions()) {
-			if (permission.equals(Manifest.permission.READ_MEDIA_IMAGES)) {
-				// Para imágenes aceptamos acceso completo O acceso limitado (Android 14+)
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-					boolean full = context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES)
-						== PackageManager.PERMISSION_GRANTED;
-					boolean limited = context.checkSelfPermission(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-						== PackageManager.PERMISSION_GRANTED;
-					if (!full && !limited)
-						return false;
-				} else {
-					if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
-						return false;
-				}
-			} else {
-				if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED)
-					return false;
+			if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+				return false;
 			}
 		}
 		return true;
@@ -131,17 +102,17 @@ public class PermissionRequestActivity extends Activity {
 
 	private static String[] getNeededPermissions() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-			return new String[]{ Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES };
+			return new String[] { Manifest.permission.READ_MEDIA_AUDIO, Manifest.permission.READ_MEDIA_IMAGES };
 		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-			return new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE };
+			return new String[] { Manifest.permission.READ_EXTERNAL_STORAGE };
 		}
-		return new String[]{ Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE };
+		return new String[] { Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE };
 	}
 
 	private static String[] getOptionalPermissions() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-			return new String[]{ Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED };
+			return new String[] { Manifest.permission.POST_NOTIFICATIONS };
 		}
 		return new String[]{};
 	}
