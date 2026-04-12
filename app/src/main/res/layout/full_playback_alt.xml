@@ -42,7 +42,7 @@ THE SOFTWARE.
 		android:collapseColumns="0"
 		android:stretchColumns="1"
 		android:shrinkColumns="1"
-		android:background="?overlay_background_color"
+		android:background="#66000000"
 		android:paddingLeft="5dip"
 		android:paddingRight="5dip">
 
@@ -71,7 +71,7 @@ THE SOFTWARE.
 			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:background="?overlay_background_color"
+				android:background="#66000000"
 				android:elevation="2dp"
 				android:orientation="vertical">
 					<include layout="@layout/seek_bar" />
