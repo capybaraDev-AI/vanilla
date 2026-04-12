@@ -28,8 +28,8 @@
               android:layout_marginBottom="20dip"
               android:paddingBottom="20dip"
               android:orientation="vertical">
-                  <include layout="@layout/seek_bar" />
-                  <include layout="@layout/controls" android:id="@+id/queue_slider" />
+                  <include layout="@layout/seek_bar_playback" />
+				  <include layout="@layout/controls_playback" android:id="@+id/queue_slider" />
           </LinearLayout>
           <fragment class="ch.blinkenlights.android.vanilla.ShowQueueFragment"
               android:id="@+id/queue"
