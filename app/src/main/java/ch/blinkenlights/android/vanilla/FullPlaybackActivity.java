@@ -275,9 +275,6 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	 * Aplica el color dominante de la carátula como fondo degradado
 	 */
 	private void applyBackgroundGradient(Song song) {
-	    View bg = findViewById(R.id.background_gradient);
-	    if (bg == null) return;
-	
 	    Bitmap cover = (song != null) ? song.getLargeCover(this) : null;
 	    int dominantColor = getDominantColor(cover);
 	    int darkColor = Color.parseColor("#111111");
@@ -286,7 +283,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	        GradientDrawable.Orientation.TOP_BOTTOM,
 	        new int[]{ dominantColor, darkColor }
 	    );
-	    bg.setBackground(gradient);
+	    getWindow().setBackgroundDrawable(gradient);
 	}
 
 	@Override
