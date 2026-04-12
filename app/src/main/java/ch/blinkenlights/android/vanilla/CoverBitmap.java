@@ -270,21 +270,31 @@ public final class CoverBitmap {
 		Bitmap scaled = Bitmap.createScaledBitmap(source, (int)(SLACK_RATIO * sourceWidth), (int)(SLACK_RATIO * sourceHeight), true);
 		return createBorderedBitmap(scaled, sourceWidth, sourceHeight);
 	}
-
+	
 	private static Bitmap createBorderedBitmap(Bitmap source, int width, int height) {
-		Bitmap dst = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		Canvas canvas = new Canvas(dst);
-
-		BitmapShader shader = new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		paint.setShader(shader);
-
-		RectF rect = new RectF(0.0f, 0.0f, source.getWidth(), source.getHeight());
-		float radius = 12;
-		canvas.translate((height - source.getHeight()) / 2, (width - source.getWidth()) / 2);
-		canvas.drawRoundRect(rect, radius, radius, paint);
-		return dst;
+	    Bitmap dst = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+	    Canvas canvas = new Canvas(dst);
+	
+	    float radius = 12;
+	    float tx = (height - source.getHeight()) / 2f;
+	    float ty = (width - source.getWidth()) / 2f;
+	    RectF rect = new RectF(ty, tx, ty + source.getWidth(), tx + source.getHeight());
+	
+	    // Sombra sutil alrededor de la carátula
+	    Paint shadowPaint = new Paint();
+	    shadowPaint.setAntiAlias(true);
+	    shadowPaint.setColor(0x55000000);
+	    RectF shadowRect = new RectF(rect.left + 4, rect.top + 4, rect.right + 4, rect.bottom + 4);
+	    canvas.drawRoundRect(shadowRect, radius, radius, shadowPaint);
+	
+	    // Carátula
+	    BitmapShader shader = new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+	    Paint paint = new Paint();
+	    paint.setAntiAlias(true);
+	    paint.setShader(shader);
+	    canvas.translate(ty, tx);
+	    canvas.drawRoundRect(new RectF(0, 0, source.getWidth(), source.getHeight()), radius, radius, paint);
+	    return dst;
 	}
 
 	public static Bitmap generateDefaultCover(Context context, int width, int height) {
