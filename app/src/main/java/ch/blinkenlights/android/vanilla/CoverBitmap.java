@@ -103,13 +103,15 @@ public final class CoverBitmap {
 	 */
 	private static void drawText(Canvas canvas, String text, int left, int top, int width, int maxWidth, Paint paint)
 	{
-		canvas.save();
-		int offset = Math.max(0, maxWidth - width) / 2;
-		canvas.clipRect(left, top, left + maxWidth, top + paint.getTextSize() * 2);
-		canvas.drawText(text, left + offset, top - paint.ascent(), paint);
-		canvas.restore();
+	    canvas.save();
+	    int margin = (int)(paint.getTextSize() * 0.8f);
+	    int availableWidth = maxWidth - margin * 2;
+	    int offset = Math.max(0, availableWidth - width) / 2;
+	    canvas.clipRect(left + margin, top, left + maxWidth - margin, top + paint.getTextSize() * 2);
+	    canvas.drawText(text, left + margin + offset, top - paint.ascent(), paint);
+	    canvas.restore();
 	}
-
+	
 	/**
 	 * Create an image representing the given song. Includes cover art and
 	 * possibly song title/artist/ablum, depending on the given style.
