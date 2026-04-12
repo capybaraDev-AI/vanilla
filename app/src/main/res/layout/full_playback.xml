@@ -21,16 +21,15 @@
       android:layout_marginTop="0dip"
       android:orientation="horizontal"
       vanilla:slider_handle_id="@+id/queue_slider">
-          <LinearLayout
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@android:color/transparent"
-              android:layout_marginBottom="20dip"
-              android:paddingBottom="20dip"
-              android:orientation="vertical">
-                  <include layout="@layout/seek_bar_playback" />
-				  <include layout="@layout/controls_playback" android:id="@+id/queue_slider" />
-          </LinearLayout>
+          	<LinearLayout
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:background="@android:color/transparent"
+			    android:paddingBottom="40dip"
+			    android:orientation="vertical">
+			        <include layout="@layout/seek_bar_playback" />
+			        <include layout="@layout/controls_playback" android:id="@+id/queue_slider" />
+			</LinearLayout>
           <fragment class="ch.blinkenlights.android.vanilla.ShowQueueFragment"
               android:id="@+id/queue"
               android:layout_width="fill_parent"
