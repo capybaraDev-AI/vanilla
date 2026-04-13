@@ -168,7 +168,6 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 			if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
 			    actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
 			}
-			mCoverView.setTopInset(actionBarHeight);
 		});
 
 		TableLayout table = (TableLayout)findViewById(R.id.info_table);
