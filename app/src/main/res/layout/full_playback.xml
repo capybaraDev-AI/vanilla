@@ -13,11 +13,11 @@
 	  android:layout_gravity="top" />
 
   <ch.blinkenlights.android.vanilla.CoverView
-      android:id="@+id/cover_view"
-      android:layout_marginTop="?android:attr/actionBarSize"
-      android:layout_marginBottom="@dimen/full_playback_controls_height"
-      android:layout_height="fill_parent"
-      android:layout_width="fill_parent" />
+    android:id="@+id/cover_view"
+    android:layout_marginTop="?android:attr/actionBarSize"
+    android:layout_marginBottom="@dimen/full_playback_controls_height"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent" />
 
   <ch.blinkenlights.android.vanilla.SlidingView
       android:id="@+id/sliding_view"
