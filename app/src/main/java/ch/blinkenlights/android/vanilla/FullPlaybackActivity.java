@@ -39,6 +39,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.util.TypedValue;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -158,6 +159,17 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		coverView.setOnClickListener(this);
 		coverView.setOnLongClickListener(this);
 		mCoverView = coverView;
+
+		mCoverView.post(() -> {
+		    int actionBarHeight = 0;
+		    TypedValue tv = new TypedValue();
+		    if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+		        actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+		    }
+		    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mCoverView.getLayoutParams();
+		    params.topMargin = actionBarHeight;
+		    mCoverView.setLayoutParams(params);
+		});
 
 		TableLayout table = (TableLayout)findViewById(R.id.info_table);
 		if (table != null) {
