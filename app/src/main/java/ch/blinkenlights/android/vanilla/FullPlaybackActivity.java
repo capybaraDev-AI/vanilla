@@ -141,8 +141,10 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 
 		setContentView(layout);
 		getWindow().setStatusBarColor(Color.TRANSPARENT);
+		getWindow().setBackgroundDrawable(null);
 		if (getActionBar() != null) {
 			getActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+			getActionBar().setElevation(0);
 		}
 		findViewById(R.id.sliding_view).setBackgroundColor(Color.TRANSPARENT);
 		
@@ -296,7 +298,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 	    b = (long)(b * 0.5f);
 	    return Color.rgb((int)r, (int)g, (int)b);
 	}
-	
+
 	/**
 	 * Aplica el color dominante de la carátula como fondo degradado
 	 */
