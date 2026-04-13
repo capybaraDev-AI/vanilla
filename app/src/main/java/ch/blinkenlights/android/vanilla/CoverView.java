@@ -153,6 +153,7 @@ public final class CoverView extends View implements Handler.Callback {
 		mContext = context;
 		mBitmapBucket = new BitmapBucket();
 		mScroller = new CoverScroller(context);
+		setLayerType(View.LAYER_TYPE_HARDWARE, null);
 	}
 
 	/**
