@@ -123,15 +123,6 @@ public final class CoverView extends View implements Handler.Callback {
 	private int mCoverStyle = -1;
 	
 	/**
-	 * Top inset to leave free for the ActionBar
-	 */
-	private int mTopInset = 0;
-	
-	public void setTopInset(int pixels) {
-	    mTopInset = pixels;
-	    invalidate();
-	}
-	/**
 	 * Our public callback interface
 	 */
 	public interface Callback {
@@ -153,7 +144,6 @@ public final class CoverView extends View implements Handler.Callback {
 		mContext = context;
 		mBitmapBucket = new BitmapBucket();
 		mScroller = new CoverScroller(context);
-		setLayerType(View.LAYER_TYPE_HARDWARE, null);
 	}
 
 	/**
