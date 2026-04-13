@@ -129,6 +129,16 @@ public final class CoverView extends View implements Handler.Callback {
 	 * The style to use for the cover.
 	 */
 	private int mCoverStyle = -1;
+	
+	/**
+	 * Top inset to leave free for the ActionBar
+	 */
+	private int mTopInset = 0;
+	
+	public void setTopInset(int pixels) {
+	    mTopInset = pixels;
+	    invalidate();
+	}
 	/**
 	 * Our public callback interface
 	 */
