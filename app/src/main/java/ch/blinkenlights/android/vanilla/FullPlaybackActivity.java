@@ -164,13 +164,11 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 
 		mCoverView.post(() -> {
 		    int actionBarHeight = 0;
-		    TypedValue tv = new TypedValue();
-		    if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-		        actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-		    }
-		    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mCoverView.getLayoutParams();
-		    params.topMargin = actionBarHeight;
-		    mCoverView.setLayoutParams(params);
+			TypedValue tv = new TypedValue();
+			if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+			    actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+			}
+			mCoverView.setTopInset(actionBarHeight);
 		});
 
 		TableLayout table = (TableLayout)findViewById(R.id.info_table);
