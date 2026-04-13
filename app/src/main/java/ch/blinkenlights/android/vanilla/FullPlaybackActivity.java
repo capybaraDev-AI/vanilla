@@ -153,8 +153,14 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		    new int[]{ 0x88000000, 0x00000000 });
 		View scrimView = findViewById(R.id.status_bar_scrim);
 		if (scrimView != null) {
-			scrimView.setBackground(scrim);
+		    scrimView.setBackground(scrim);
 		}
+		
+		getWindow().getDecorView().setOnApplyWindowInsetsListener((v, insets) -> {
+		    int statusBarHeight = insets.getSystemWindowInsetTop();
+		    findViewById(R.id.cover_view).setPadding(0, statusBarHeight, 0, 0);
+		    return insets;
+		});
 
 		CoverView coverView = (CoverView)findViewById(R.id.cover_view);
 		coverView.setup(mLooper, this, coverStyle);
