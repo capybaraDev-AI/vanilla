@@ -316,7 +316,10 @@ public final class CoverView extends View implements Handler.Callback {
 	@Override
 	protected void onDraw(Canvas canvas) {
 	    canvas.save();
-	    canvas.clipRect(0, mTopInset, getWidth(), getHeight());
+	    if (mTopInset > 0) {
+	        canvas.drawColor(android.graphics.Color.TRANSPARENT, android.graphics.PorterDuff.Mode.CLEAR);
+	        canvas.clipRect(0, mTopInset, getWidth(), getHeight());
+	    }
 	    int width = getWidth();
 	    int height = getHeight() - mTopInset;
 	    int x = 0;
