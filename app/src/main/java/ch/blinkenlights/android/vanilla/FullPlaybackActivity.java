@@ -141,8 +141,7 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		setContentView(layout);
 		getWindow().setStatusBarColor(Color.TRANSPARENT);
 		getWindow().getDecorView().setSystemUiVisibility(
-		    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-		    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    		View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 		if (getActionBar() != null) {
 		    getActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 		}
@@ -155,12 +154,6 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		if (scrimView != null) {
 		    scrimView.setBackground(scrim);
 		}
-		
-		getWindow().getDecorView().setOnApplyWindowInsetsListener((v, insets) -> {
-		    int statusBarHeight = insets.getSystemWindowInsetTop();
-		    findViewById(R.id.cover_view).setPadding(0, statusBarHeight, 0, 0);
-		    return insets;
-		});
 
 		CoverView coverView = (CoverView)findViewById(R.id.cover_view);
 		coverView.setup(mLooper, this, coverStyle);
