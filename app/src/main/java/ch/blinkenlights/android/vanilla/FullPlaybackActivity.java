@@ -163,11 +163,6 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		mCoverView = coverView;
 
 		mCoverView.post(() -> {
-		    int actionBarHeight = 0;
-			TypedValue tv = new TypedValue();
-			if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-			    actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-			}
 		});
 
 		TableLayout table = (TableLayout)findViewById(R.id.info_table);
