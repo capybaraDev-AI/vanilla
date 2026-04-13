@@ -306,13 +306,8 @@ public final class CoverView extends View implements Handler.Callback {
 	 */
 	@Override
 	protected void onDraw(Canvas canvas) {
-	    canvas.save();
-	    if (mTopInset > 0) {
-	        canvas.drawColor(android.graphics.Color.TRANSPARENT, android.graphics.PorterDuff.Mode.CLEAR);
-	        canvas.clipRect(0, mTopInset, getWidth(), getHeight());
-	    }
 	    int width = getWidth();
-	    int height = getHeight() - mTopInset;
+	    int height = getHeight();
 	    int x = 0;
 	    int scrollX = mScrollX;
 	    boolean snapshot = !mScroller.isFinished();
@@ -322,12 +317,11 @@ public final class CoverView extends View implements Handler.Callback {
 	        bitmap = snapshot ? mBitmapBucket.getSnapshot(i) : mBitmapBucket.getBitmap(i);
 	        if (bitmap != null && scrollX + width > x && scrollX < x + width) {
 	            final int xOffset = (width - bitmap.getWidth()) / 2;
-	            final int yOffset = mTopInset + (int)(height - bitmap.getHeight()) / 2;
+	            final int yOffset = (int)(height - bitmap.getHeight()) / 2;
 	            canvas.drawBitmap(bitmap, x + xOffset - scrollX, yOffset, null);
 	        }
 	        x += width;
 	    }
-	    canvas.restore();
 	    advanceScroll();
 	}
 
