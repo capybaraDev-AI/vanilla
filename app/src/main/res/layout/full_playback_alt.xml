@@ -2,60 +2,50 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
        xmlns:vanilla="http://schemas.android.com/apk/res-auto" >
 
-  <View
-      android:id="@+id/background_gradient"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent" />
+    <View
+        android:id="@+id/background_gradient"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-  <ch.blinkenlights.android.vanilla.CoverView
-      android:id="@+id/cover_view"
-      android:layout_marginTop="@dimen/full_playback_alt_text"
-      android:layout_marginBottom="@dimen/full_playback_controls_height"
-      android:layout_height="fill_parent"
-      android:layout_width="fill_parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
-  <TableLayout
-      android:id="@+id/info_table"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="top"
-      android:collapseColumns="0"
-      android:stretchColumns="1"
-      android:shrinkColumns="1"
-      android:background="@android:color/transparent"
-      android:paddingLeft="5dip"
-      android:paddingRight="5dip">
-      <include layout="@layout/track_details" />
-      <TableRow>
-          <TextView
-              android:text="@string/_replaygain"
-              android:textColor="?overlay_foreground_color"
-              android:paddingRight="5dip"
-              android:gravity="right" />
-          <TextView android:id="@+id/replaygain" android:textColor="?overlay_foreground_color"/>
-      </TableRow>
-  </TableLayout>
+        <ch.blinkenlights.android.vanilla.CoverView
+            android:id="@+id/cover_view"
+            android:layout_width="@dimen/walkman_cover_size"
+            android:layout_height="@dimen/walkman_cover_size"
+            android:layout_marginTop="@dimen/walkman_cover_margin_top"
+            android:elevation="10dp" /> <include layout="@layout/track_details" 
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="@dimen/walkman_metadata_padding" />
 
-  <ch.blinkenlights.android.vanilla.SlidingView
-      android:id="@+id/sliding_view"
-      android:layout_height="fill_parent"
-      android:layout_width="fill_parent"
-      android:layout_gravity="bottom|left"
-      android:layout_marginTop="@dimen/full_playback_alt_text"
-      android:orientation="horizontal"
-      vanilla:slider_handle_id="@+id/queue_slider">
-          <LinearLayout
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@android:color/transparent"
-              android:orientation="vertical">
-                  <include layout="@layout/seek_bar_playback" />
-				  <include layout="@layout/controls_playback" android:id="@+id/queue_slider" />
-          </LinearLayout>
-          <fragment class="ch.blinkenlights.android.vanilla.ShowQueueFragment"
-              android:id="@+id/queue"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent" />
-  </ch.blinkenlights.android.vanilla.SlidingView>
+    </LinearLayout>
 
+    <ch.blinkenlights.android.vanilla.SlidingView
+        android:id="@+id/sliding_view"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="0dip"
+        vanilla:slider_handle_id="@+id/queue_slider">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="vertical">
+            <include layout="@layout/seek_bar_playback" />
+            <include layout="@layout/controls_playback" android:id="@+id/queue_slider" />
+        </LinearLayout>
+
+        <fragment class="ch.blinkenlights.android.vanilla.ShowQueueFragment"
+            android:id="@+id/queue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </ch.blinkenlights.android.vanilla.SlidingView>
 </merge>

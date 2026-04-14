@@ -14,4 +14,10 @@
 	<dimen name="material_text_subhead">16sp</dimen>
 	<!-- height of 'full_playback_alt' text -->
 	<dimen name="full_playback_alt_text">60dip</dimen>
+
+	<dimen name="walkman_cover_margin_top">60dp</dimen>
+    <dimen name="walkman_cover_size">280dp</dimen>
+    <dimen name="walkman_metadata_padding">24dp</dimen>
+    <dimen name="walkman_text_size_title">22sp</dimen>
+    <dimen name="walkman_text_size_artist">16sp</dimen>
 </resources>
