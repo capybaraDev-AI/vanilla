@@ -151,10 +151,10 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		GradientDrawable scrim = new GradientDrawable(
 			GradientDrawable.Orientation.TOP_BOTTOM,
 			new int[]{ 0x88000000, 0x00000000 });
-		View scrimView = findViewById(R.id.status_bar_scrim);
-		if (scrimView != null) {
-			scrimView.setBackground(scrim);
-		}
+		//View scrimView = findViewById(R.id.status_bar_scrim);
+		//if (scrimView != null) {
+		//	scrimView.setBackground(scrim);
+		//}
 
 		CoverView coverView = (CoverView)findViewById(R.id.cover_view);
 		coverView.setup(mLooper, this, coverStyle);
