@@ -1,33 +1,39 @@
-name: Build Vanilla Music
+name: Generar APK Oficial Firmado
 
 on:
   push:
     branches: [ master ]
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Configurar Java
         uses: actions/setup-java@v4
         with:
+          distribution: 'zulu'
           java-version: '17'
-          distribution: 'temurin'
 
-      - name: Grant execute permission to gradlew
+      - name: Dar permisos a Gradle
         run: chmod +x gradlew
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+      - name: Compilar Release
+        run: ./gradlew assembleRelease
 
-      - name: Upload APK
+      - name: Firmar con la Llave
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Subir APK Final
         uses: actions/upload-artifact@v4
         with:
-          name: vanilla-music-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
+          name: VanillaMusic-Custom-Build
+          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
