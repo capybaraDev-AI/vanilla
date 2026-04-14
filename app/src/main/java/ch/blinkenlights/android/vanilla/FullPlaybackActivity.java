@@ -162,6 +162,25 @@ public class FullPlaybackActivity extends SlidingPlaybackActivity
 		coverView.setOnLongClickListener(this);
 		mCoverView = coverView;
 
+		// --- EFECTO WALKMAN: Animación de profundidad ---
+		mCoverView.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				switch (event.getAction()) {
+					case MotionEvent.ACTION_DOWN:
+						// Se hunde y se oscurece un poco al tocar
+						v.animate().scaleX(0.95f).scaleY(0.95f).alpha(0.8f).setDuration(100).start();
+						break;
+					case MotionEvent.ACTION_UP:
+					case MotionEvent.ACTION_CANCEL:
+						// Regresa a su estado original con un pequeño rebote
+						v.animate().scaleX(1.0f).scaleY(1.0f).alpha(1.0f).setDuration(200).start();
+						break;
+				}
+				return false; // Importante: que sea false para que el clic normal siga funcionando
+			}
+		});
+
 		mCoverView.post(() -> {
 		});
 
